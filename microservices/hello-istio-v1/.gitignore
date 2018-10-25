@@ -1,0 +1,4 @@
+.gradle/
+.idea/
+build/
+hello-istio-v1.iml
