@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-istio
+  labels:
+    app: hello-istio
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: hello-istio
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-istio-v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-istio
+        version: v1
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+    spec:
+      containers:
+      - name: hello-istio
+        image: lreimer/hello-istio:1.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /api/application.wadl
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-istio-v2
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-istio
+        version: v2
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+    spec:
+      containers:
+      - name: hello-istio
+        image: lreimer/hello-istio:2.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /api/application.wadl
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-istio-client
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-istio-busybox
+    spec:
+      containers:
+      - image: busybox
+        command:
+          - sleep
+          - "3600"
+        imagePullPolicy: IfNotPresent
+        name: busybox
+      restartPolicy: Always
