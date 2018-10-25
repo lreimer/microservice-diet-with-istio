@@ -1,6 +1,8 @@
 .gradle
 /build/
 
+/istio-*/
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
