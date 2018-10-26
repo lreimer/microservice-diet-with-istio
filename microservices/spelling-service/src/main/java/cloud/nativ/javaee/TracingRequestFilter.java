@@ -10,12 +10,19 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableSet;
 
 @Provider
 @RequestScoped
 @Log
 public class TracingRequestFilter implements ContainerRequestFilter, ClientRequestFilter {
+
+    private static final Set<String> HEADERS = unmodifiableSet(new HashSet<>(asList("x-request-id", "x-b3-traceid", "x-b3-spanid", "x-b3-parentspanid", "x-b3-sampled", "x-b3-flags", "x-ot-span-context")));
 
     private MultivaluedMap<String, String> tracingHeaders = new MultivaluedHashMap<>();
 
@@ -31,7 +38,7 @@ public class TracingRequestFilter implements ContainerRequestFilter, ClientReque
     public void filter(ContainerRequestContext requestContext) {
         MultivaluedMap<String, String> headers = requestContext.getHeaders();
         headers.forEach((key, values) -> {
-            if (key.toUpperCase().startsWith("X-B3-")) {
+            if (HEADERS.contains(key.toLowerCase())) {
                 tracingHeaders.addAll(key, values);
             }
         });
