@@ -1,10 +1,10 @@
-package com.bmw.cloud.istio.spelling;
+package cloud.nativ.javaee;
 
 import lombok.extern.java.Log;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
 import javax.ws.rs.GET;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 
-@RequestScoped
+@ApplicationScoped
 @Path("spelling")
 @Log
 public class SpellingResource {
@@ -31,7 +31,7 @@ public class SpellingResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Timed(unit = MetricUnits.MILLISECONDS)
+    @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public Response spelling(@QueryParam("word") @NotBlank String word, @Context HttpHeaders headers) {
         LOGGER.log(Level.INFO, "Get spelling for {0}.", word);
 

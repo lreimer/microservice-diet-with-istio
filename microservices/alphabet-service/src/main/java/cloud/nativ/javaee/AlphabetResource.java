@@ -1,4 +1,4 @@
-package com.bmw.cloud.istio.alphabet;
+package cloud.nativ.javaee;
 
 import lombok.extern.java.Log;
 import org.eclipse.microprofile.metrics.MetricUnits;
@@ -20,9 +20,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
+@Log
 @ApplicationScoped
 @Path("alphabet")
-@Log
 public class AlphabetResource {
 
     private Map<String, Buchstabiertafel> buchstabiertafeln = new HashMap<>();
@@ -37,9 +37,8 @@ public class AlphabetResource {
     @GET
     @Path("/{character}")
     @Produces(MediaType.TEXT_PLAIN)
-    @Timed(unit = MetricUnits.MILLISECONDS)
-    public Response alphabet(@PathParam("character") @Size(min = 1, max = 1) String character,
-                             @Context HttpHeaders headers) {
+    @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
+    public Response alphabet(@PathParam("character") @Size(min = 1, max = 1) String character, @Context HttpHeaders headers) {
 
         Locale locale = headers.getAcceptableLanguages().get(0);
         String language = locale.getLanguage();

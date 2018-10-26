@@ -15,7 +15,7 @@ services:
       build: ../alphabet-service/
       image: lreimer/alphabet-service:1.0.1
       mem_limit: 512m
-      expose:
+      ports:
         - "28080:8080"  # the HTTP endpoint
       networks:
         istio:

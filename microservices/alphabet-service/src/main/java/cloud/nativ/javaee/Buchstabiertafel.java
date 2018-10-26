@@ -1,4 +1,4 @@
-package com.bmw.cloud.istio.alphabet;
+package cloud.nativ.javaee;
 
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +11,7 @@ import java.util.Map;
 public class Buchstabiertafel {
 
     private final String language;
+
     @Singular("map")
     private final Map<String, String> tafel;
 

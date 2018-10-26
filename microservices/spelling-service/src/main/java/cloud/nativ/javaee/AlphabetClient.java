@@ -1,18 +1,14 @@
-package com.bmw.cloud.istio.spelling;
+package cloud.nativ.javaee;
 
 import lombok.extern.java.Log;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
-import org.eclipse.microprofile.faulttolerance.ExecutionContext;
-import org.eclipse.microprofile.faulttolerance.Fallback;
-import org.eclipse.microprofile.faulttolerance.FallbackHandler;
+import org.eclipse.microprofile.faulttolerance.*;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -21,8 +17,8 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-@RequestScoped
 @Log
+@ApplicationScoped
 public class AlphabetClient {
 
     @Inject
@@ -41,16 +37,13 @@ public class AlphabetClient {
     @ConfigProperty(name = "alphabet.service.url", defaultValue = "http://alphabet-service:8080/api/alphabet/{character}")
     private String alphabetServiceUrl;
 
-    @Inject
-    private TracingRequestFilter tracingFilter;
-
     private Client client;
 
     @PostConstruct
     void initialize() {
         client = ClientBuilder.newBuilder()
-                .connectTimeout(1, TimeUnit.SECONDS)
-                .readTimeout(1, TimeUnit.SECONDS)
+                .connectTimeout(2, TimeUnit.SECONDS)
+                .readTimeout(2, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -59,38 +52,42 @@ public class AlphabetClient {
         client.close();
     }
 
-    @CircuitBreaker(delay = 1, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
+    @CircuitBreaker(delay = 5, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
+    @Timeout(value = 1, unit = ChronoUnit.SECONDS)
     @Fallback(StringFallbackHandler.class)
-    @Timed(unit = MetricUnits.MILLISECONDS)
+    @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getA(Locale locale) {
-        return client.register(tracingFilter).target(aServiceUrl).resolveTemplate("a", "a")
-                .request().acceptLanguage(locale)
-                .get(String.class);
-    }
-
-    @CircuitBreaker(delay = 2, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
-    @Fallback(StringFallbackHandler.class)
-    @Timed(unit = MetricUnits.MILLISECONDS)
-    public String getB(Locale locale) {
-        return client.register(tracingFilter).target(bServiceUrl).resolveTemplate("b", "b")
-                .request().acceptLanguage(locale)
-                .get(String.class);
-    }
-
-    @CircuitBreaker(delay = 3, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
-    @Fallback(StringFallbackHandler.class)
-    @Timed(unit = MetricUnits.MILLISECONDS)
-    public String getC(Locale locale) {
-        return client.register(tracingFilter).target(cServiceUrl).resolveTemplate("c", "c")
+        return client.target(aServiceUrl).resolveTemplate("a", "a")
                 .request().acceptLanguage(locale)
                 .get(String.class);
     }
 
     @CircuitBreaker(delay = 5, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
+    @Timeout(value = 2, unit = ChronoUnit.SECONDS)
     @Fallback(StringFallbackHandler.class)
-    @Timed(unit = MetricUnits.MILLISECONDS)
+    @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
+    public String getB(Locale locale) {
+        return client.target(bServiceUrl).resolveTemplate("b", "b")
+                .request().acceptLanguage(locale)
+                .get(String.class);
+    }
+
+    @CircuitBreaker(delay = 5, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
+    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
+    @Fallback(StringFallbackHandler.class)
+    @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
+    public String getC(Locale locale) {
+        return client.target(cServiceUrl).resolveTemplate("c", "c")
+                .request().acceptLanguage(locale)
+                .get(String.class);
+    }
+
+    @CircuitBreaker(delay = 5, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
+    @Timeout(value = 5, unit = ChronoUnit.SECONDS)
+    @Fallback(StringFallbackHandler.class)
+    @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getAny(char character, Locale locale) {
-        return client.register(tracingFilter).target(alphabetServiceUrl).resolveTemplate("character", Character.toString(character))
+        return client.target(alphabetServiceUrl).resolveTemplate("character", Character.toString(character))
                 .request().acceptLanguage(locale)
                 .get(String.class);
     }

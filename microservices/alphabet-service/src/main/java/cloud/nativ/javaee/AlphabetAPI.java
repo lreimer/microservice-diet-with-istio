@@ -1,4 +1,4 @@
-package com.bmw.cloud.istio.alphabet;
+package cloud.nativ.javaee;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
