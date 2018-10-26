@@ -4,7 +4,7 @@ metadata:
   name: hello-istio
 spec:
   hosts:
-  - "*"
+  - "hello-istio.cloud"
   gateways:
   - hello-istio-gateway
   http:

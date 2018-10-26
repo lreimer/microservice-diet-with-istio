@@ -30,13 +30,13 @@ spec:
       containers:
       - name: hello-istio
         image: lreimer/hello-istio:1.0.1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "250m"
           limits:
             memory: "512Mi"
             cpu: "1000m"
@@ -48,7 +48,7 @@ spec:
           periodSeconds: 5
         readinessProbe:
           httpGet:
-            path: /api/application.wadl
+            path: /
             port: 8080
           initialDelaySeconds: 30
           periodSeconds: 5
@@ -71,13 +71,13 @@ spec:
       containers:
       - name: hello-istio
         image: lreimer/hello-istio:2.0.1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "250m"
           limits:
             memory: "512Mi"
             cpu: "1000m"
@@ -89,7 +89,7 @@ spec:
           periodSeconds: 5
         readinessProbe:
           httpGet:
-            path: /api/application.wadl
+            path: /
             port: 8080
           initialDelaySeconds: 30
           periodSeconds: 5
