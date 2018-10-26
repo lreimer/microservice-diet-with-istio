@@ -15,7 +15,7 @@ prepare:
 	@$(GCP) config set container/use_client_certificate False
 
 cluster:
-	@$(GCP) container clusters create $(NAME) --num-nodes=5 --enable-autoscaling --min-nodes=5 --max-nodes=7
+	@$(GCP) container clusters create $(NAME) --num-nodes=7 --enable-autoscaling --min-nodes=7 --max-nodes=10
 	@$(K8S) cluster-info
 
 istio-install:
@@ -79,7 +79,7 @@ alphabet-demo:
 	@cd microservices/spelling-service/ && ./gradlew ass
 	@cd microservices/spelling-service/ && docker-compose build
 	@docker push lreimer/spelling-service:1.0.1
-	
+
 clean:
 	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml
 	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/helm/istio/templates/crds.yaml -n istio-system
