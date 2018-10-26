@@ -5,7 +5,7 @@ on a diet with Istio._
 
 ## Istio in Action
 
-### 1. Create Kubernetes cluster
+### Step 1: Create Kubernetes cluster
 
 In this first step we are going to create a Kubernetes cluster on GCP. Issue the
 following command fire up the infrastructure:
@@ -13,17 +13,17 @@ following command fire up the infrastructure:
 $ make prepare cluster
 ```
 
-### 2. Install Istio
+### Step 2: Install Istio
 
 In this step we are going to install the latest (1.0.2) version of Istio. We are
 not going to install the mutual TLS version here. Also, we are labeling the `default`
 namespace to perform the Istio sidecar injection automatically.
 
 ```
-$ make install
+$ make istio-install
 ```
 
-### 3: Hello Istio Showcase
+### Step 3: Hello Istio Showcase
 
 In this first showcase are going to deploy two versions of the same microservice and
 use different traffic management features to demonstrate the power and simplicity of Istio.
@@ -47,13 +47,16 @@ $ kubectl apply -f showcases/hello-istio/hello-istio-v2.yaml
 $ http get $INGRESS_HOST/api/hello
 
 # apply the weighted or rule base virtual services
-$ kubectl apply -f showcases/hello-istio/hello-istio-70-30.yaml
-$ http get $INGRESS_HOST/api/hello
 $ kubectl apply -f showcases/hello-istio/hello-istio-user-agent.yaml
+$ http get $INGRESS_HOST/api/hello
+$ kubectl apply -f showcases/hello-istio/hello-istio-70-30.yaml
 $ http get $INGRESS_HOST/api/hello
 ```
 
-### 9: Delete Kubernetes cluster
+### Step 4: Alphabet Showcase
+
+
+### Step X: Delete Kubernetes cluster
 
 Do not forget to shutdown everything, otherwise you will have a bad surprise on
 your credit card bill at the end of the month!

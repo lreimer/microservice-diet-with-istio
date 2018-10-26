@@ -18,7 +18,7 @@ cluster:
 	@$(GCP) container clusters create $(NAME) --num-nodes=5 --enable-autoscaling --min-nodes=5 --max-nodes=7
 	@$(K8S) cluster-info
 
-install:
+istio-install:
 	@curl -L https://git.io/getLatestIstio | sh -
 	@export PATH=$PWD/istio-$(VERSION)/bin:$PATH
 	@istioctl version
