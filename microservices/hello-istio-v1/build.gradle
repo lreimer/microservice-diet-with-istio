@@ -17,6 +17,4 @@ dependencies {
     providedCompile 'org.eclipse.microprofile.fault-tolerance:microprofile-fault-tolerance-api:1.1.2'
     providedCompile 'org.eclipse.microprofile.health:microprofile-health-api:1.0'
     providedCompile 'org.eclipse.microprofile.opentracing:microprofile-opentracing-api:1.1'
-
-    compileOnly 'org.projectlombok:lombok:1.16.18'
 }
