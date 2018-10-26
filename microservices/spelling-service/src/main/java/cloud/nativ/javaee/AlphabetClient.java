@@ -2,7 +2,6 @@ package cloud.nativ.javaee;
 
 import lombok.extern.java.Log;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.faulttolerance.*;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
@@ -12,7 +11,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -37,13 +35,16 @@ public class AlphabetClient {
     @ConfigProperty(name = "alphabet.service.url", defaultValue = "http://alphabet-service:8080/api/alphabet/{character}")
     private String alphabetServiceUrl;
 
+    @Inject
+    private TracingRequestFilter tracingRequestFilter;
+
     private Client client;
 
     @PostConstruct
     void initialize() {
         client = ClientBuilder.newBuilder()
-                .connectTimeout(2, TimeUnit.SECONDS)
-                .readTimeout(2, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -52,52 +53,39 @@ public class AlphabetClient {
         client.close();
     }
 
-    @CircuitBreaker(delay = 5, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
-    @Timeout(value = 1, unit = ChronoUnit.SECONDS)
-    @Fallback(StringFallbackHandler.class)
     @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getA(Locale locale) {
-        return client.target(aServiceUrl).resolveTemplate("a", "a")
+        LOGGER.log(Level.INFO, "Getting A for locale {0}.", locale);
+        return client.register(tracingRequestFilter).target(aServiceUrl)
+                .resolveTemplate("a", "a")
                 .request().acceptLanguage(locale)
                 .get(String.class);
     }
 
-    @CircuitBreaker(delay = 5, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
-    @Timeout(value = 2, unit = ChronoUnit.SECONDS)
-    @Fallback(StringFallbackHandler.class)
     @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getB(Locale locale) {
-        return client.target(bServiceUrl).resolveTemplate("b", "b")
+        LOGGER.log(Level.INFO, "Getting B for locale {0}.", locale);
+        return client.register(tracingRequestFilter).target(bServiceUrl)
+                .resolveTemplate("b", "b")
                 .request().acceptLanguage(locale)
                 .get(String.class);
     }
 
-    @CircuitBreaker(delay = 5, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
-    @Timeout(value = 3, unit = ChronoUnit.SECONDS)
-    @Fallback(StringFallbackHandler.class)
     @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getC(Locale locale) {
-        return client.target(cServiceUrl).resolveTemplate("c", "c")
+        LOGGER.log(Level.INFO, "Getting C for locale {0}.", locale);
+        return client.register(tracingRequestFilter).target(cServiceUrl)
+                .resolveTemplate("c", "c")
                 .request().acceptLanguage(locale)
                 .get(String.class);
     }
 
-    @CircuitBreaker(delay = 5, delayUnit = ChronoUnit.SECONDS, requestVolumeThreshold = 10)
-    @Timeout(value = 5, unit = ChronoUnit.SECONDS)
-    @Fallback(StringFallbackHandler.class)
     @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getAny(char character, Locale locale) {
-        return client.target(alphabetServiceUrl).resolveTemplate("character", Character.toString(character))
+        LOGGER.log(Level.INFO, "Getting character for {0} and locale {1}.", new Object[]{character, locale});
+        return client.register(tracingRequestFilter).target(alphabetServiceUrl)
+                .resolveTemplate("character", Character.toString(character))
                 .request().acceptLanguage(locale)
                 .get(String.class);
-    }
-
-    @ApplicationScoped
-    public static class StringFallbackHandler implements FallbackHandler<String> {
-        @Override
-        public String handle(ExecutionContext context) {
-            LOGGER.log(Level.WARNING, "Handling fallback for {0}.", context.getMethod().getName());
-            return "?";
-        }
     }
 }
