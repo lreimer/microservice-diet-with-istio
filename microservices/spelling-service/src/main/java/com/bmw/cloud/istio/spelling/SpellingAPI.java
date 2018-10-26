@@ -1,0 +1,11 @@
+package com.bmw.cloud.istio.spelling;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
+/**
+ * The REST API application.
+ */
+@ApplicationPath("/api/")
+public class SpellingAPI extends Application {
+}
