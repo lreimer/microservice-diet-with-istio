@@ -2,6 +2,8 @@ package cloud.nativ.javaee;
 
 import lombok.extern.java.Log;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
@@ -53,6 +55,8 @@ public class AlphabetClient {
         client.close();
     }
 
+    @Timeout(2000)
+    @Fallback(fallbackMethod = "getFallback")
     @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getA(Locale locale) {
         LOGGER.log(Level.INFO, "Getting A for locale {0}.", locale);
@@ -62,6 +66,8 @@ public class AlphabetClient {
                 .get(String.class);
     }
 
+    @Timeout(2000)
+    @Fallback(fallbackMethod = "getFallback")
     @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getB(Locale locale) {
         LOGGER.log(Level.INFO, "Getting B for locale {0}.", locale);
@@ -71,6 +77,8 @@ public class AlphabetClient {
                 .get(String.class);
     }
 
+    @Timeout(2000)
+    @Fallback(fallbackMethod = "getFallback")
     @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getC(Locale locale) {
         LOGGER.log(Level.INFO, "Getting C for locale {0}.", locale);
@@ -80,6 +88,8 @@ public class AlphabetClient {
                 .get(String.class);
     }
 
+    @Timeout(2000)
+    @Fallback(fallbackMethod = "getAnyFallback")
     @Timed(unit = MetricUnits.MILLISECONDS, absolute = true)
     public String getAny(char character, Locale locale) {
         LOGGER.log(Level.INFO, "Getting character for {0} and locale {1}.", new Object[]{character, locale});
@@ -87,5 +97,13 @@ public class AlphabetClient {
                 .resolveTemplate("character", Character.toString(character))
                 .request().acceptLanguage(locale)
                 .get(String.class);
+    }
+
+    public String getFallback(Locale locale) {
+        return "?";
+    }
+
+    public String getAnyFallback(char character, Locale locale) {
+        return getFallback(locale);
     }
 }
