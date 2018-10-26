@@ -14,8 +14,9 @@ public class EverythingOkCheck implements HealthCheck {
         return HealthCheckResponse
                 .named("everythingOk")
                 .up()
-                .withData("message", "Everything is healthy.")
+                .withData("message", "Everything is OK.")
                 .withData("version", "1.0.1")
+                .withData("currentTimeMillis", System.currentTimeMillis())
                 .build();
     }
 }
