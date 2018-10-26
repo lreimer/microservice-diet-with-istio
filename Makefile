@@ -71,6 +71,15 @@ hello-v2:
 	@cd microservices/hello-istio-v2/ && docker-compose build
 	@docker push lreimer/hello-istio:2.0.1
 
+alphabet-demo:
+	@cd microservices/alphabet-service/ && ./gradlew ass
+	@cd microservices/alphabet-service/ && docker-compose build
+	@docker push lreimer/alphabet-service:1.0.1
+
+	@cd microservices/spelling-service/ && ./gradlew ass
+	@cd microservices/spelling-service/ && docker-compose build
+	@docker push lreimer/spelling-service:1.0.1
+	
 clean:
 	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml
 	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/helm/istio/templates/crds.yaml -n istio-system
