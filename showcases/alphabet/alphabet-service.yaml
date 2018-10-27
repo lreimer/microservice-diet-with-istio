@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: alphabet-service
-        image: lreimer/alphabet-service:1.0
+        image: lreimer/alphabet-service:1.0.1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

@@ -54,12 +54,18 @@ prometheus:
 servicegraph:
 	@$(K8S) -n istio-system port-forward $$(kubectl -n istio-system get pod -l app=servicegraph -o jsonpath='{.items[0].metadata.name}') 8082:8088 & 2>&1
 	@sleep 3
+	@open http://localhost:8082/force/forcegraph.html
 	@open http://localhost:8082/dotviz
 
 jaeger:
 	@$(K8S) port-forward -n istio-system $$(kubectl get pod -n istio-system -l app=jaeger -o jsonpath='{.items[0].metadata.name}') 8084:16686 & 2>&1
 	@sleep 3
 	@open http://localhost:8084
+
+kiali-install:
+	@$(K8S) create -n istio-system -f showcases/kiali/kiali-configmap.yaml
+	@$(K8S) create -n istio-system -f showcases/kiali/kiali-secrets.yaml
+	@$(K8S) create -n istio-system -f showcases/kiali/kiali.yaml
 
 hello-v1:
 	@cd microservices/hello-istio-v1/ && ./gradlew ass
@@ -71,7 +77,7 @@ hello-v2:
 	@cd microservices/hello-istio-v2/ && docker-compose build
 	@docker push lreimer/hello-istio:2.0.1
 
-alphabet-demo:
+alphabet:
 	@cd microservices/alphabet-service/ && ./gradlew ass
 	@cd microservices/alphabet-service/ && docker-compose build
 	@docker push lreimer/alphabet-service:1.0.1
@@ -79,6 +85,34 @@ alphabet-demo:
 	@cd microservices/spelling-service/ && ./gradlew ass
 	@cd microservices/spelling-service/ && docker-compose build
 	@docker push lreimer/spelling-service:1.0.1
+
+hello-demo:
+	@$(K8S) apply -f showcase/hello-istio/hello-istio.yaml
+	@$(K8S) apply -f showcase/hello-istio/hello-istio-gateway.yaml
+	@$(K8S) apply -f showcase/hello-istio/hello-istio-virtual-service.yaml
+	@$(K8S) apply -f showcase/hello-istio/hello-istio-destination.yaml
+
+alphabet-demo:
+	@$(K8S) apply -f showcase/alphabet/spelling-service.yaml
+	@$(K8S) apply -f showcase/alphabet/spelling-gateway.yaml
+	@$(K8S) apply -f showcase/alphabet/spelling-service-virtual-service.yaml
+	@$(K8S) apply -f showcase/alphabet/spelling-service-destination.yaml
+
+	@$(K8S) apply -f showcase/alphabet/alphabet-service.yaml
+	@$(K8S) apply -f showcase/alphabet/alphabet-service-virtual-service.yaml
+	@$(K8S) apply -f showcase/alphabet/alphabet-service-destination.yaml
+
+	@$(K8S) apply -f showcase/alphabet/a-service.yaml
+	@$(K8S) apply -f showcase/alphabet/a-service-virtual-service.yaml
+	@$(K8S) apply -f showcase/alphabet/a-service-destination.yaml
+
+	@$(K8S) apply -f showcase/alphabet/b-service.yaml
+	@$(K8S) apply -f showcase/alphabet/b-service-virtual-service.yaml
+	@$(K8S) apply -f showcase/alphabet/b-service-destination.yaml
+
+	@$(K8S) apply -f showcase/alphabet/c-service.yaml
+	@$(K8S) apply -f showcase/alphabet/c-service-virtual-service.yaml
+	@$(K8S) apply -f showcase/alphabet/c-service-destination.yaml
 
 clean:
 	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml

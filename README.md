@@ -32,29 +32,70 @@ use different traffic management features to demonstrate the power and simplicit
 $ kubectl get svc istio-ingressgateway -n istio-system
 $ export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
+$ echo $INGRESS_HOST hello-istio.cloud >> /etc/hosts
+
 # apply the basic Kubernetes primitives
 $ kubectl apply -f showcases/hello-istio/hello-istio.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-destination.yaml
 $ kubectl apply -f showcases/hello-istio/hello-istio-gateway.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-all.yaml
+$ kubectl apply -f showcases/hello-istio/hello-istio-virtual-service.yaml
+$ kubectl apply -f showcases/hello-istio/hello-istio-destination.yaml
 
-$ http get $INGRESS_HOST/api/hello
+$ http get hello-istio.cloud/api/hello
 
 # apply the version specific virtual services
 $ kubectl apply -f showcases/hello-istio/hello-istio-v1.yaml
-$ http get $INGRESS_HOST/api/hello
-$ kubectl apply -f showcases/hello-istio/hello-istio-v2.yaml
-$ http get $INGRESS_HOST/api/hello
+$ http get hello-istio.cloud/api/hello
 
-# apply the weighted or rule base virtual services
+$ kubectl apply -f showcases/hello-istio/hello-istio-v2.yaml
+$ http get hello-istio.cloud/api/hello
+
+$ watch -n 1 -d http get hello-istio.cloud/api/hello
+
+$ kubectl apply -f showcases/hello-istio/hello-istio-v1.yaml
+$ kubectl apply -f showcases/hello-istio/hello-istio-75-25.yaml
+$ kubectl apply -f showcases/hello-istio/hello-istio-50-50.yaml
+$ kubectl apply -f showcases/hello-istio/hello-istio-25-75.yaml
+$ kubectl apply -f showcases/hello-istio/hello-istio-v2.yaml
+
 $ kubectl apply -f showcases/hello-istio/hello-istio-user-agent.yaml
-$ http get $INGRESS_HOST/api/hello
-$ kubectl apply -f showcases/hello-istio/hello-istio-70-30.yaml
-$ http get $INGRESS_HOST/api/hello
+$ http get hello-istio.cloud/api/hello
+$ http get hello-istio.cloud/api/hello User-Agent:Chrome
+
+$ kubectl apply -f showcases/hello-istio/hello-istio-user-cookie.yaml
+$ http get hello-istio.cloud/api/hello
+$ http get hello-istio.cloud/api/hello Cookie:user=oreilly
 ```
 
 ### Step 4: Alphabet Showcase
 
+This showcase demonstrates more advances features like introducing delays,
+failure and circuit breakers.
+
+```
+$ export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+$ echo $INGRESS_HOST alphabet.cloud >> /etc/hosts
+
+$ make alphabet-demo
+
+$ http get alphabet.cloud/api/spelling\?word=abc
+$ http get alphabet.cloud/api/spelling\?word=hello
+
+$ http get alphabet.cloud/api/spelling\?word=abc Accept-Language:de
+$ http get alphabet.cloud/api/spelling\?word=hello Accept-Language:de
+```
+
+### Step 5: Diagnosability
+
+As part of Istio there are a few diagnosability features included: logging,
+monitoring, tracing and service graphs.
+
+```
+$ make prometheus
+$ make grafana
+$ make servicegraph
+$ make jaeger
+```
 
 ### Step X: Delete Kubernetes cluster
 
@@ -64,6 +105,12 @@ your credit card bill at the end of the month!
 ```
 $ make clean
 ```
+
+## References
+
+- https://istio.io
+- https://www.kiali.io
+- https://conferences.oreilly.com/software-architecture/sa-eu/public/schedule/detail/70784
 
 ## Maintainer
 
