@@ -10,3 +10,5 @@ spec:
     - destination:
         host: a-service
         subset: v1
+    # the default is 15s
+    timeout: 1s

@@ -34,13 +34,10 @@ $ export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway
 
 $ echo $INGRESS_HOST hello-istio.cloud >> /etc/hosts
 
-# apply the basic Kubernetes primitives
-$ kubectl apply -f showcases/hello-istio/hello-istio.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-gateway.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-virtual-service.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-destination.yaml
+$ make hello-demo
 
 $ http get hello-istio.cloud/api/hello
+$ watch -n 1 -d http get hello-istio.cloud/api/hello
 
 # apply the version specific virtual services
 $ kubectl apply -f showcases/hello-istio/hello-istio-v1.yaml
@@ -49,8 +46,6 @@ $ http get hello-istio.cloud/api/hello
 $ kubectl apply -f showcases/hello-istio/hello-istio-v2.yaml
 $ http get hello-istio.cloud/api/hello
 
-$ watch -n 1 -d http get hello-istio.cloud/api/hello
-
 $ kubectl apply -f showcases/hello-istio/hello-istio-v1.yaml
 $ kubectl apply -f showcases/hello-istio/hello-istio-75-25.yaml
 $ kubectl apply -f showcases/hello-istio/hello-istio-50-50.yaml
@@ -58,11 +53,9 @@ $ kubectl apply -f showcases/hello-istio/hello-istio-25-75.yaml
 $ kubectl apply -f showcases/hello-istio/hello-istio-v2.yaml
 
 $ kubectl apply -f showcases/hello-istio/hello-istio-user-agent.yaml
-$ http get hello-istio.cloud/api/hello
 $ http get hello-istio.cloud/api/hello User-Agent:Chrome
 
 $ kubectl apply -f showcases/hello-istio/hello-istio-user-cookie.yaml
-$ http get hello-istio.cloud/api/hello
 $ http get hello-istio.cloud/api/hello Cookie:user=oreilly
 ```
 
@@ -74,15 +67,21 @@ failure and circuit breakers.
 ```
 $ export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-$ echo $INGRESS_HOST alphabet.cloud >> /etc/hosts
+$ echo $INGRESS_HOST spelling.cloud >> /etc/hosts
 
 $ make alphabet-demo
 
-$ http get alphabet.cloud/api/spelling\?word=abc
-$ http get alphabet.cloud/api/spelling\?word=hello
+$ http get spelling.cloud/api/spelling\?word=abc
+$ http get spelling.cloud/api/spelling\?word=hello
 
-$ http get alphabet.cloud/api/spelling\?word=abc Accept-Language:de
-$ http get alphabet.cloud/api/spelling\?word=hello Accept-Language:de
+$ http get spelling.cloud/api/spelling\?word=abc Accept-Language:de
+$ http get spelling.cloud/api/spelling\?word=hello Accept-Language:de
+
+$ kubectl apply -f showcases/alphabet/alphabet-service-delay.yaml
+$ http get spelling.cloud/api/spelling\?word=hello
+
+$ kubectl apply -f showcases/alphabet/alphabet-service-fault.yaml
+$ http get spelling.cloud/api/spelling\?word=hello
 ```
 
 ### Step 5: Diagnosability

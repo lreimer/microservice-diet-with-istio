@@ -10,3 +10,6 @@ spec:
     - destination:
         host: alphabet-service
         subset: v1
+    retries:
+      attempts: 3
+      perTryTimeout: 1s

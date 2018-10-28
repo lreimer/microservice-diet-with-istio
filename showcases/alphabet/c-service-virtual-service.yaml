@@ -10,3 +10,6 @@ spec:
     - destination:
         host: c-service
         subset: v1
+    # the default is 15s
+    timeout: 1s
+    

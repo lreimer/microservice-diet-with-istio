@@ -8,9 +8,9 @@ spec:
   http:
   - fault:
       delay:
-        fixedDelay: 5s
-        percent: 100
+        fixedDelay: 2s
+        percent: 50
     route:
-      destination:
+    - destination:
         host: alphabet-service
         subset: v1
