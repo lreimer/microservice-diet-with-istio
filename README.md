@@ -20,6 +20,7 @@ not going to install the mutual TLS version here. Also, we are labeling the `def
 namespace to perform the Istio sidecar injection automatically.
 
 ```
+$ make get-istio
 $ make istio-install
 ```
 
