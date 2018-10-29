@@ -7,6 +7,9 @@ spec:
   - alphabet-service
   http:
   - fault:
+      delay:
+        fixedDelay: 2s
+        percent: 50
       abort:
         httpStatus: 500
         percent: 50

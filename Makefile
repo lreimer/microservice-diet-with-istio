@@ -1,5 +1,5 @@
 NAME = istio-in-action
-VERSION = 1.0.2
+VERSION = 1.0.3
 GCP = gcloud
 K8S = kubectl
 
@@ -7,8 +7,6 @@ K8S = kubectl
 
 info:
 	@echo "Microservices on a Diet with Istio"
-	@istioctl get virtualservices
-	@istioctl get destinationrules
 
 prepare:
 	@$(GCP) config set compute/zone europe-west1-b
@@ -16,16 +14,15 @@ prepare:
 
 cluster:
 	@$(GCP) container clusters create $(NAME) --num-nodes=7 --enable-autoscaling --min-nodes=7 --max-nodes=10
+	@$(K8S) create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$$(gcloud config get-value core/account)
 	@$(K8S) cluster-info
 
-get-istio: istio-$(VERSION)/istio.VERSION
+get-istio:
 	@curl -L https://git.io/getLatestIstio | sh -
-	@export PATH=$PWD/istio-$(VERSION)/bin:$PATH
-	@istioctl version
+	@echo "Make sure to export the PATH variable."
 
-istio-install: get-istio
+istio-install:
 	# deploy Istio
-	@$(K8S) create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$$(gcloud config get-value core/account)
 	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/helm/istio/templates/crds.yaml
 	@sleep 5
 	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml
@@ -117,7 +114,7 @@ alphabet-demo:
 	@$(K8S) apply -f showcases/alphabet/c-service-destination.yaml
 
 clean:
-	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml
-	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/helm/istio/templates/crds.yaml -n istio-system
+	@$(K8S) delete --ignore-not-found=true -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml
+	@$(K8S) delete --ignore-not-found=true -f istio-$(VERSION)/install/kubernetes/helm/istio/templates/crds.yaml -n istio-system
 	@rm -rf istio-$(VERSION)
 	@$(GCP) container clusters delete $(NAME) --async --quiet
