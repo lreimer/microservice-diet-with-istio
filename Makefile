@@ -15,6 +15,7 @@ prepare:
 cluster:
 	@$(GCP) container clusters create $(NAME) --num-nodes=7 --enable-autoscaling --min-nodes=7 --max-nodes=10
 	@$(K8S) create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$$(gcloud config get-value core/account)
+	@$(K8S) create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/aio/deploy/recommended/kubernetes-dashboard.yaml
 	@$(K8S) cluster-info
 
 get-istio:
