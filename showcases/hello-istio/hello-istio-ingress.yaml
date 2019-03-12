@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hello-istio
+spec:
+  rules:
+  - host: hello-istio.cloud
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hello-istio
+          servicePort: http

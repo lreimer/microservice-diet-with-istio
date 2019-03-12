@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: spelling-service
+spec:
+  rules:
+  - host: spelling.cloud
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: spelling-service
+          servicePort: http
