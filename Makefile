@@ -1,5 +1,5 @@
 NAME = istio-in-action
-VERSION = 1.0.5
+VERSION = 1.0.6
 GCP = gcloud
 K8S = kubectl
 
