@@ -28,10 +28,10 @@ istio-install:
 	@sleep 5
 	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml
 	@sleep 5
-	@$(K8S) get pods -n istio-system
 	@$(K8S) create namespace istio-demo
 	@$(K8S) label namespace istio-demo istio-injection=enabled
 	@$(K8S) label namespace default istio-injection=enabled
+	@$(K8S) get pods -n istio-system
 	@$(K8S) get svc istio-ingressgateway -n istio-system
 
 access-token:
