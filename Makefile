@@ -29,6 +29,8 @@ istio-install:
 	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml
 	@sleep 5
 	@$(K8S) get pods -n istio-system
+	@$(K8S) create namespace istio-demo
+	@$(K8S) label namespace istio-demo istio-injection=enabled
 	@$(K8S) label namespace default istio-injection=enabled
 	@$(K8S) get svc istio-ingressgateway -n istio-system
 
@@ -87,32 +89,32 @@ alphabet:
 	@docker push lreimer/spelling-service:1.0.1
 
 hello-demo:
-	@$(K8S) apply -f showcases/hello-istio/hello-istio.yaml
-	@$(K8S) apply -f showcases/hello-istio/hello-istio-gateway.yaml
-	@$(K8S) apply -f showcases/hello-istio/hello-istio-virtual-service.yaml
-	@$(K8S) apply -f showcases/hello-istio/hello-istio-destination.yaml
+	@$(K8S) apply -n istio-demo -f showcases/hello-istio/hello-istio.yaml
+	@$(K8S) apply -n istio-demo -f showcases/hello-istio/hello-istio-gateway.yaml
+	@$(K8S) apply -n istio-demo -f showcases/hello-istio/hello-istio-virtual-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/hello-istio/hello-istio-destination.yaml
 
 alphabet-demo:
-	@$(K8S) apply -f showcases/alphabet/spelling-service.yaml
-	@$(K8S) apply -f showcases/alphabet/spelling-gateway.yaml
-	@$(K8S) apply -f showcases/alphabet/spelling-service-virtual-service.yaml
-	@$(K8S) apply -f showcases/alphabet/spelling-service-destination.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/spelling-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/spelling-gateway.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/spelling-service-virtual-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/spelling-service-destination.yaml
 
-	@$(K8S) apply -f showcases/alphabet/alphabet-service.yaml
-	@$(K8S) apply -f showcases/alphabet/alphabet-service-virtual-service.yaml
-	@$(K8S) apply -f showcases/alphabet/alphabet-service-destination.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/alphabet-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/alphabet-service-virtual-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/alphabet-service-destination.yaml
 
-	@$(K8S) apply -f showcases/alphabet/a-service.yaml
-	@$(K8S) apply -f showcases/alphabet/a-service-virtual-service.yaml
-	@$(K8S) apply -f showcases/alphabet/a-service-destination.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/a-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/a-service-virtual-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/a-service-destination.yaml
 
-	@$(K8S) apply -f showcases/alphabet/b-service.yaml
-	@$(K8S) apply -f showcases/alphabet/b-service-virtual-service.yaml
-	@$(K8S) apply -f showcases/alphabet/b-service-destination.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/b-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/b-service-virtual-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/b-service-destination.yaml
 
-	@$(K8S) apply -f showcases/alphabet/c-service.yaml
-	@$(K8S) apply -f showcases/alphabet/c-service-virtual-service.yaml
-	@$(K8S) apply -f showcases/alphabet/c-service-destination.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/c-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/c-service-virtual-service.yaml
+	@$(K8S) apply -n istio-demo -f showcases/alphabet/c-service-destination.yaml
 
 clean:
 	@$(K8S) delete --ignore-not-found=true -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml

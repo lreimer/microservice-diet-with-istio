@@ -41,22 +41,22 @@ $ http get hello-istio.cloud/api/hello
 $ watch -n 1 -d http get hello-istio.cloud/api/hello
 
 # apply the version specific virtual services
-$ kubectl apply -f showcases/hello-istio/hello-istio-v1.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-v1.yaml
 $ http get hello-istio.cloud/api/hello
 
-$ kubectl apply -f showcases/hello-istio/hello-istio-v2.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-v2.yaml
 $ http get hello-istio.cloud/api/hello
 
-$ kubectl apply -f showcases/hello-istio/hello-istio-v1.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-75-25.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-50-50.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-25-75.yaml
-$ kubectl apply -f showcases/hello-istio/hello-istio-v2.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-v1.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-75-25.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-50-50.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-25-75.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-v2.yaml
 
-$ kubectl apply -f showcases/hello-istio/hello-istio-user-agent.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-user-agent.yaml
 $ http get hello-istio.cloud/api/hello User-Agent:Chrome
 
-$ kubectl apply -f showcases/hello-istio/hello-istio-user-cookie.yaml
+$ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-user-cookie.yaml
 $ http get hello-istio.cloud/api/hello Cookie:user=oreilly
 ```
 
@@ -78,10 +78,10 @@ $ http get spelling.cloud/api/spelling\?word=hello
 $ http get spelling.cloud/api/spelling\?word=abc Accept-Language:de
 $ http get spelling.cloud/api/spelling\?word=hello Accept-Language:de
 
-$ kubectl apply -f showcases/alphabet/alphabet-service-delay.yaml
+$ kubectl apply -n istio-demo -f showcases/alphabet/alphabet-service-delay.yaml
 $ http get spelling.cloud/api/spelling\?word=hello
 
-$ kubectl apply -f showcases/alphabet/alphabet-service-fault.yaml
+$ kubectl apply -n istio-demo -f showcases/alphabet/alphabet-service-fault.yaml
 $ http get spelling.cloud/api/spelling\?word=hello
 ```
 
