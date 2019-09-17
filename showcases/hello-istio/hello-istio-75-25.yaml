@@ -12,8 +12,8 @@ spec:
     - destination:
         host: hello-istio
         subset: v1
-      weight: 75
+      weight: 25
     - destination:
         host: hello-istio
         subset: v2
-      weight: 25
+      weight: 75
