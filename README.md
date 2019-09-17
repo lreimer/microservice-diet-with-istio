@@ -57,7 +57,7 @@ $ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-user-agent.ya
 $ http get hello-istio.cloud/api/hello User-Agent:Chrome
 
 $ kubectl apply -n istio-demo -f showcases/hello-istio/hello-istio-user-cookie.yaml
-$ http get hello-istio.cloud/api/hello Cookie:user=oreilly
+$ http get hello-istio.cloud/api/hello Cookie:user=leander
 ```
 
 ### Step 4: Alphabet Showcase

@@ -1,5 +1,5 @@
 NAME = istio-in-action
-VERSION = 1.0.6
+VERSION = 1.3.0-rc.3
 GCP = gcloud
 K8S = kubectl
 
@@ -24,7 +24,11 @@ get-istio:
 
 istio-install:
 	# deploy Istio
-	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/helm/istio/templates/crds.yaml
+	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-10.yaml
+	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-11.yaml
+	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-12.yaml
+	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-certmanager-10.yaml
+	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-certmanager-11.yaml
 	@sleep 5
 	@$(K8S) apply -f istio-$(VERSION)/install/kubernetes/istio-demo.yaml
 	@sleep 5
@@ -33,6 +37,15 @@ istio-install:
 	@$(K8S) label namespace default istio-injection=enabled
 	@$(K8S) get pods -n istio-system
 	@$(K8S) get svc istio-ingressgateway -n istio-system
+
+istio-delete:
+	@$(K8S) delete -f install/kubernetes/istio-demo.yaml
+	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-10.yaml
+	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-11.yaml
+	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-12.yaml
+	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-certmanager-10.yaml
+	@$(K8S) delete -f istio-$(VERSION)/install/kubernetes/helm/istio-init/files/crd-certmanager-11.yaml
+	@$(K8S) label namespace default istio-injection-
 
 access-token:
 	@$(GCP) config config-helper --format=json | jq .credential.access_token
@@ -64,10 +77,10 @@ jaeger:
 	@sleep 3
 	@open http://localhost:8084
 
-kiali-install:
-	@$(K8S) create -n istio-system -f showcases/kiali/kiali-configmap.yaml
-	@$(K8S) create -n istio-system -f showcases/kiali/kiali-secrets.yaml
-	@$(K8S) create -n istio-system -f showcases/kiali/kiali.yaml
+kiali:
+	@$(K8S) port-forward -n istio-system $$(kubectl get pod -n istio-system -l app=kiali -o jsonpath='{.items[0].metadata.name}') 8085:20001 & 2>&1
+	@sleep 3
+	@open http://localhost:8085
 
 hello-v1:
 	@cd microservices/hello-istio-v1/ && ./gradlew ass

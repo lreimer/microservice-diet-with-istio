@@ -11,7 +11,7 @@ spec:
   - match:
     - headers:
         cookie:
-          regex: "^(.*?;)?(user=oreilly)(;.*)?$"
+          regex: "^(.*?;)?(user=leander)(;.*)?$"
     route:
       - destination:
           host: hello-istio
